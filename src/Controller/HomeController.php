@@ -16,7 +16,7 @@ class HomeController extends AbstractController
     public function homepage(EntityManagerInterface $em)
     {
         // CREATE
-/*         $product = new Product;
+        /*         $product = new Product;
         $product
             ->setName('Table en métal')
             ->setPrice(3000)
@@ -28,17 +28,17 @@ class HomeController extends AbstractController
         dd($product); */
 
         // UPDATE
-/*         $productRepository = $em->getRepository(Product::class);
+        /*         $productRepository = $em->getRepository(Product::class);
         $product = $productRepository->find(3);
         $product->setPrice(2500);
         $em->flush();
         dd($product); */
 
         // DELETE
-        $productRepository = $em->getRepository(Product::class);
-        $product = $productRepository->find(3);
-        $em->remove($product);
-        $em->flush();
+        // $productRepository = $em->getRepository(Product::class);
+        // $product = $productRepository->find(3);
+        // $em->remove($product);
+        // $em->flush();
 
         return $this->render('home.html.twig');
     }
