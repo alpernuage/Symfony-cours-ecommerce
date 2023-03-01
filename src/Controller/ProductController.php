@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManager;
@@ -69,45 +70,8 @@ class ProductController extends AbstractController
      */
     public function create(FormFactoryInterface $factory, Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
     {
-        $builder = $factory->createBuilder(FormType::class, null, [
-            'data_class' => Product::class
-        ]);
-
-        $builder->add('name', TextType::class, [
-            'label' => 'Nom du produit',
-            'attr' => [
-                'placeholder' => 'Tapez le nom du produit'
-            ],
-        ])
-            ->add('shortDescription', TextareaType::class, [
-                'label' => 'Description courte',
-                'attr' => [
-                    'placeholder' => 'Tapez une description assez courte mais parlante pour le visiteur'
-                ],
-            ])
-            ->add('price', MoneyType::class, [
-                'label' => 'Prix du produit',
-                'attr' => [
-                    'placeholder' => 'Tapez le prix du produit en €'
-                ],
-            ])
-            ->add('mainPicture', UrlType::class, [
-                'label' => 'Image du produit',
-                'attr' => ['placeholder' => 'Tapez une URL d\'image'],
-            ])
-            ->add('category', EntityType::class, [
-                'label' => 'Catégorie',
-                'placeholder' => '-- Choisir une catégorie --',
-                'class' => Category::class,
-                'choice_label' => function (Category $category) {
-                    return strtoupper($category->getName());
-                }
-            ]);
-
-        // $builder->setMethod('GET')
-        //     ->setAction('/toto');
-
-        $form = $builder->getForm();
+        // Create a form based on ProductType
+        $form = $this->createForm(ProductType::class);
         
         $form->handleRequest($request);
 
