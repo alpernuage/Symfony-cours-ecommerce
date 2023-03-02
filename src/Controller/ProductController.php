@@ -25,6 +25,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductController extends AbstractController
 {
@@ -69,8 +72,23 @@ class ProductController extends AbstractController
     /**
      * @Route("/admin/product/{id}/edit", name="product_edit")
      */
-    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator)
+    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator)
     {
+        $age = 20;
+
+        $resultat = $validator->validate($age, [
+            new LessThanOrEqual([
+                'value' => 90,
+                'message' => "L'âge doit être inférieur à {{ compared_value }} mais vous avez donné {{ value }}"
+            ]),
+            new GreaterThan([
+                'value' => 0,
+                'message' => "L'âge doit être supérieur à 0"
+            ])
+        ]);
+
+        dd($resultat);
+
         $product = $productRepository->find($id);
 
         $form = $this->createForm(ProductType::class, $product);
