@@ -25,8 +25,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductController extends AbstractController
@@ -74,6 +77,34 @@ class ProductController extends AbstractController
      */
     public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator)
     {
+        $client = [
+            'nom' => 'Bulut',
+            'prenom' => '',
+            'voiture' => [
+                'marque' => 'Toyota',
+                'couleur' => 'orange'
+            ]
+        ];
+
+        $collection = new Collection([
+            'nom' => new NotBlank(['message' => 'Le nom ne doit pas être vide !']),
+            'prenom' => [
+                new NotBlank(['message' => 'Le nom ne doit pas être vide !']),
+                new Length(['min' => 3, 'minMessage' => 'Le prénom ne doit pas faire moins de 34 caractères']),
+            ],
+            'voiture' => new Collection([
+                'marque' => new NotBlank(['message' => 'La marque est obligatoire']),
+                'couleur' => new NotBlank(['message' => 'La couleur est obligatoire']),
+            ])
+        ]);
+
+        $resultat = $validator->validate($client, $collection);
+
+        if ($resultat->count() > 0) {
+            dd('Il y a des erreurs ', $resultat);
+        }
+        dd('Tout va bien');
+
         $age = 20;
 
         $resultat = $validator->validate($age, [
@@ -97,7 +128,7 @@ class ProductController extends AbstractController
         // $form->setData($product);
 
         $form->handleRequest($request);
-        if($form->isSubmitted()){
+        if ($form->isSubmitted()) {
             $em->flush();
 
             return $this->redirectToRoute('product_show', [
@@ -123,10 +154,10 @@ class ProductController extends AbstractController
 
         // Create a form based on ProductType
         $form = $this->createForm(ProductType::class, $product);
-        
+
         $form->handleRequest($request);
 
-        if($form->isSubmitted()){
+        if ($form->isSubmitted()) {
             $product->setSlug(strtolower($slugger->slug($product->getName())));
 
             $em->persist($product);
