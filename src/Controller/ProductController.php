@@ -77,6 +77,11 @@ class ProductController extends AbstractController
      */
     public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator)
     {
+        $product = new Product;
+
+        $resultat = $validator->validate($product, null, ["Default", "with-price"]);
+        dd($resultat);
+
         $product = $productRepository->find($id);
 
         $form = $this->createForm(ProductType::class, $product);
