@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProductRepository;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
@@ -22,11 +22,14 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom du produit est obligatoire")
+     * @Assert\Length(min=3, max=255, minMessage="Le nom du produit doit contenir au moins 3 caractères")
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="Le prix du produit est obligatoire")
      */
     private $price;
 
@@ -50,14 +53,14 @@ class Product
      */
     private $shortDescription;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata) {
-        $metadata->addPropertyConstraints('name', [
-            new NotBlank(['message' => 'Le nom du produit est obligatoire']),
-            new Length(['min' => 3, 'max' => 255, 'minMessage' => 'Le nom du produit doit contenir au moins 3 caractères']),
-        ]);
-        $metadata->addPropertyConstraint('price', new NotBlank(['message' => 'Le prix du produit est obligatoire']));
-    }
-    
+    // public static function loadValidatorMetadata(ClassMetadata $metadata) {
+    //     $metadata->addPropertyConstraints('name', [
+    //         new Assert\NotBlank(['message' => 'Le nom du produit est obligatoire']),
+    //         new Length(['min' => 3, 'max' => 255, 'minMessage' => 'Le nom du produit doit contenir au moins 3 caractères']),
+    //     ]);
+    //     $metadata->addPropertyConstraint('price', new Assert\NotBlank(['message' => 'Le prix du produit est obligatoire']));
+    // }
+
     public function getId(): ?int
     {
         return $this->id;
