@@ -77,39 +77,14 @@ class ProductController extends AbstractController
      */
     public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator)
     {
-        $product = new Product;
-        
-        $resultat = $validator->validate($product);
-
-        if ($resultat->count() > 0) {
-            dd('Il y a des erreurs ', $resultat);
-        }
-        dd('Tout va bien');
-
-        $age = 20;
-
-        $resultat = $validator->validate($age, [
-            new LessThanOrEqual([
-                'value' => 90,
-                'message' => "L'âge doit être inférieur à {{ compared_value }} mais vous avez donné {{ value }}"
-            ]),
-            new GreaterThan([
-                'value' => 0,
-                'message' => "L'âge doit être supérieur à 0"
-            ])
-        ]);
-
-        dd($resultat);
-
         $product = $productRepository->find($id);
 
         $form = $this->createForm(ProductType::class, $product);
 
-        // Fill the form with data of product
-        // $form->setData($product);
-
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // dd($form->getData());
             $em->flush();
 
             return $this->redirectToRoute('product_show', [

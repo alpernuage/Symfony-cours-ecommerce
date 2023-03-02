@@ -22,14 +22,11 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le nom du produit est obligatoire")
-     * @Assert\Length(min=3, max=255, minMessage="Le nom du produit doit contenir au moins 3 caractères")
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Le prix du produit est obligatoire")
      */
     private $price;
 
@@ -71,7 +68,7 @@ class Product
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -83,7 +80,7 @@ class Product
         return $this->price;
     }
 
-    public function setPrice(int $price): self
+    public function setPrice(?int $price): self
     {
         $this->price = $price;
 
