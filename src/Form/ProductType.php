@@ -36,12 +36,12 @@ class ProductType extends AbstractType
                     'placeholder' => 'Tapez une description assez courte mais parlante pour le visiteur'
                 ],
             ])
-            ->add('price', PriceType::class, [
+            ->add('price', MoneyType::class, [
                 'label' => 'Prix du produit',
                 'attr' => [
                     'placeholder' => 'Tapez le prix du produit en €'
                 ],
-                // 'divisor' => 100 // replace CentimesTransformer below
+                'divisor' => 100 // replace CentimesTransformer below
             ])
             ->add('mainPicture', UrlType::class, [
                 'label' => 'Image du produit',
