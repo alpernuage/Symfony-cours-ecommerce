@@ -75,7 +75,7 @@ class ProductController extends AbstractController
     /**
      * @Route("/admin/product/{id}/edit", name="product_edit")
      */
-    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator)
+    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em)
     {
         $product = $productRepository->find($id);
 
@@ -104,7 +104,7 @@ class ProductController extends AbstractController
     /**
      * @Route("/admin/product/create", name="product_create")
      */
-    public function create(FormFactoryInterface $factory, Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
+    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
     {
         $product = new Product;
 
