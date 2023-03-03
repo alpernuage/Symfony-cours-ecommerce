@@ -8,37 +8,46 @@ use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AppFixtures extends Fixture
 {
     protected $slugger;
+    protected $encoder;
 
-    public function __construct(SluggerInterface $slugger)
+    public function __construct(SluggerInterface $slugger, UserPasswordEncoderInterface $encoder)
     {
         $this->slugger = $slugger;
+        $this->encoder = $encoder;
     }
 
     public function load(ObjectManager $manager): void
     {
-        $faker  = Factory::create('fr_FR');
+        $faker = Factory::create('fr_FR');
         $faker->addProvider(new \Liior\Faker\Prices($faker));
         $faker->addProvider(new \Bezhanov\Faker\Provider\Commerce($faker));
         $faker->addProvider(new \Bluemmb\Faker\PicsumPhotosProvider($faker));
 
         $admin = new User;
+
+        $hash = $this->encoder->encodePassword($admin, "password"); // reference for $admin is security.yaml/encoders
+
         $admin->setEmail("admin@gmail.com")
             ->setFullName("Admin")
-            ->setPassword("password")
+            ->setPassword($hash)
             ->setRoles(["ROLE_ADMIN"]);
 
         $manager->persist($admin);
 
         for ($u = 0; $u < 5; $u++) {
             $user = new User;
+
+            $hash = $this->encoder->encodePassword($user, "password");
+
             $user->setEmail("user$u@gmail.com")
                 ->setFullName($faker->name())
-                ->setPassword("password");
+                ->setPassword($hash);
 
             $manager->persist($user);
         }
