@@ -16,7 +16,7 @@ class CartController extends AbstractController
     /**
      * @Route("/cart/add/{id}", name="cart_add", requirements={"id":"\d+"})
      */
-    public function add($id,ProductRepository $productRepository, SessionInterface $session, FlashBagInterface $flashBag): Response
+    public function add($id, ProductRepository $productRepository, SessionInterface $session, FlashBagInterface $flashBag): Response
     {
         // 0. Securisation : est-ce que le produit existe ?
         $product = $productRepository->find($id);
@@ -49,6 +49,31 @@ class CartController extends AbstractController
         return $this->redirectToRoute('product_show', [
             'category_slug' => $product->getCategory()->getSlug(),
             'slug' => $product->getSlug()
+        ]);
+    }
+
+    /**
+     * @Route("/cart", name="cart_show")
+     */
+    public function show(SessionInterface $session, ProductRepository $productRepository)
+    {
+        $detailedCart = [];
+        $total = 0;
+
+        foreach ($session->get('cart', []) as $id => $qty) {
+            $product = $productRepository->find($id);
+
+            $detailedCart[] = [
+                'product' => $product,
+                'qty' => $qty
+            ];
+
+            $total += ($product->getPrice() * $qty);
+        }
+
+        return $this->render('cart/index.html.twig', [
+            'items' => $detailedCart,
+            'total' => $total
         ]);
     }
 }
