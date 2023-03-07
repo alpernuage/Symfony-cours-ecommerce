@@ -37,6 +37,15 @@ class CartService
         $this->session->set('cart', $cart);
     }
 
+    public function remove(int $id)
+    {
+        $cart = $this->session->get('cart', []);
+
+        unset($cart[$id]);
+
+        $this->session->set('cart', $cart);
+    }
+
     public function getTotal(): int
     {
         $total = 0;
